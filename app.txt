@@ -1,0 +1,49 @@
+1, First We need to Install .NET Core SDK Latest
+2, Create Web API Using below command
+     dotnet new webapi
+3, Run the application
+     dotnet run
+4, Install the below extension
+     1, C#
+     2, Nuget Package manager
+5, Install Entity Framework
+      dotnet tool install --global dotnet-ef
+6, Add package Entity Framework Design
+     dotnet add package Microsoft.EntityFrameworkCore.Design 
+7, Execute the below command form verify the EF Installation
+     dotnet ef
+8, Enter scaffold command 
+      dotnet ef dbcontext scaffold "connectionstring" Microsoft.EntityFrameworkCore.SqlServer --output-dir Models
+9. In appsettings.json edit:
+   "ConnectionStrings":{
+                       "constring":"connectionstring"
+                       }
+10.Before adding Model in the code add tables inside the sql server.
+
+
+
+11. Under Model:
+                MasterContext.cs:
+                remove connectionstring and add inside "protected onConfiguring{(
+                                                        if(!optionsBuilder.IsConfigured){
+                                                                                        }}
+12. Add middleware: under program.cs
+                    using MvcModel;
+                    using Microsoft.EntityFrameworkCore;
+                    builder.Services.AddDbContext<MasterContext>(options=>{
+                                                          options.UseSqlServer(builder.Configuration.GetConnectionString("constring"));
+                                                          });
+
+13. Create a ProductController.cs under controllers : copy the default code of weatherforecast controller to this.
+                                        change constructor name and class name inside it and remove the logger.
+                                        add: using MvcApp.model;
+                                             private readonly learn_d_DBContext
+                                             public ProductController(learn_d_DBContext){
+                                                  this._DBContext=dBContext;}
+                                              [HttpGet("GetAll")]
+                                     public IActionResult GetAll(){
+                                      var product=this._DBContext.Products.Tolist();
+                                      return Ok(product);
+}}
+
+14. dotnet run
